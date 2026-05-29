@@ -7,163 +7,172 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* Pengaturan Dasar Halaman */
+        /* --- Pengaturan Dasar & Reset --- */
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             color: #222;
         }
         
-        /* Kontainer Utama - Dioptimalkan untuk 2 Lembar Pas */
+        /* --- Kontainer Utama (Responsive & Pintar) --- */
         .container {
             width: 100%;
-            max-width: 1040px;
+            max-width: 1100px; /* Dioptimalkan untuk landscape PC & PDF */
             background: #fff;
             margin: 0 auto;
-            padding: 20px 25px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            border-radius: 6px;
-            box-sizing: border-box;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
         
         h2 {
             text-align: center;
             text-transform: uppercase;
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #0056b3;
             border-bottom: 2px solid #0056b3;
-            padding-bottom: 5px;
-            font-size: 16px;
+            padding-bottom: 8px;
+            font-size: 18px;
             letter-spacing: 0.5px;
         }
         
-        /* Layout Tabel Informasi Utama KOP */
-        .header-table {
-            width: 100%;
-            margin-bottom: 10px;
+        /* --- Refaktor Kop Header: Grid Fleksibel Menggantikan Tabel --- */
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
             background: #f8f9fa;
             border-left: 5px solid #0056b3;
-            border-collapse: collapse;
-        }
-        .header-table td {
-            padding: 6px 12px;
-            vertical-align: top;
-            border: none;
-            width: 50%;
+            padding: 12px;
+            border-radius: 0 4px 4px 0;
         }
         
         .form-group {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         .form-group label {
             display: block;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             font-size: 11px;
             color: #555;
         }
         .form-group input, .form-group select {
             width: 100%;
-            padding: 4px 8px;
+            padding: 6px 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 12px;
             color: #333;
+            background-color: #fff;
         }
         
-        /* Sektor Blok Shift (Diringkas agar 3 shift muat di Lembar 1) */
+        /* --- Sektor Blok Shift --- */
         .shift-section {
             background: #fff;
             border: 1px solid #dcdfe6;
-            border-radius: 4px;
-            padding: 10px 12px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            page-break-inside: avoid;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         .shift-title {
             font-weight: bold;
             color: #4e73df;
             border-bottom: 1px solid #e3e6f0;
-            padding-bottom: 2px;
-            margin-bottom: 8px;
-            font-size: 13px;
+            padding-bottom: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        /* Pembungkus Tabel agar responsive di Mobile tanpa merusak layout */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 10px;
         }
         
-        /* Tabel Input Kerjaan */
         table.pekerjaan-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 5px;
+            min-width: 500px; /* Menjamin inputan tidak gepeng di layar sekecil apapun */
         }
         table.pekerjaan-table th {
             background-color: #f5f7fa;
             border: 1px solid #dcdfe6;
-            padding: 6px;
-            font-size: 11px;
+            padding: 8px;
+            font-size: 12px;
             text-align: left;
             color: #444;
         }
         table.pekerjaan-table td {
             border: 1px solid #dcdfe6;
-            padding: 4px;
+            padding: 6px;
             vertical-align: middle;
         }
         
         textarea {
             width: 100%;
-            padding: 4px;
+            padding: 6px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
-            resize: none;
+            resize: vertical;
             font-family: Arial, sans-serif;
-            font-size: 11px;
+            font-size: 12px;
         }
         
-        /* Tombol Aksi */
+        /* --- Tombol Interaktif --- */
         .btn {
             background: #28a745;
             color: white;
-            padding: 3px 8px;
+            padding: 5px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         .btn:hover { background: #218838; }
         .btn-danger { background: #dc3545; }
         .btn-danger:hover { background: #c82333; }
         
-        /* Komponen Upload Gambar */
+        /* --- Komponen Upload Gambar --- */
         .upload-container {
-            margin-top: 5px;
-            padding-top: 5px;
+            margin-top: 10px;
+            padding-top: 8px;
             border-top: 1px dotted #ccc;
         }
         .upload-label {
             display: inline-block;
             background: #4e73df;
             color: white;
-            padding: 3px 8px;
-            font-size: 10px;
+            padding: 5px 12px;
+            font-size: 11px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
         }
         .file-input { display: none; }
         
-        /* Galeri Foto Output Lembar 2 (Grid Ekonomis) */
+        /* --- Galeri Foto Output (Ekonomis & Rapi) --- */
         .preview-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-            gap: 10px;
-            margin-top: 4px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 5px;
             text-align: left;
         }
         .preview-card {
@@ -172,13 +181,11 @@
             border-radius: 4px;
             padding: 5px;
             position: relative;
-            text-align: center;
             box-sizing: border-box;
-            page-break-inside: avoid;
         }
         .image-container {
             width: 100%;
-            height: 85px;
+            height: 90px;
             background: #f1f5f9;
             border-radius: 3px;
             display: flex;
@@ -193,8 +200,8 @@
         }
         .img-caption-input {
             width: 100%;
-            margin-top: 4px;
-            padding: 3px;
+            margin-top: 5px;
+            padding: 4px;
             font-size: 10px;
             border: 1px solid #ccc;
             border-radius: 3px;
@@ -209,62 +216,75 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
-            line-height: 14px;
+            line-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 0;
             z-index: 10;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* Tabel Tanda Tangan */
-        .signature-table {
-            width: 100%;
-            margin-top: 15px;
-            border-collapse: collapse;
-            border: none;
-            page-break-inside: avoid;
+        /* --- Refaktor Komponen Tanda Tangan (Grid Responsif) --- */
+        .signature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
         }
-        .signature-table td {
-            width: 25%;
+        .signature-item {
+            background: #fff;
+            border: 1px solid #e3e6f0;
+            border-radius: 6px;
+            padding: 10px;
             text-align: center;
-            vertical-align: top;
-            padding: 4px;
-            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
         }
         .signature-title {
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-size: 11px;
             line-height: 1.3;
-            height: 30px;
+            height: 32px;
             color: #333;
+        }
+        .canvas-container {
+            width: 100%;
+            max-width: 220px;
+            margin: 0 auto;
         }
         canvas {
             border: 1px dashed #ababab;
             background-color: #fafafa;
             border-radius: 4px;
             cursor: crosshair;
+            width: 100% !important; /* Membuat canvas auto-stretch mengikuti kontainer parent */
+            height: 100px;
         }
         .clear-btn {
-            margin-top: 2px;
+            margin-top: 4px;
             background: #6c757d;
             color: white;
             border: none;
-            padding: 2px 5px;
+            padding: 3px 8px;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 9px;
+            font-size: 10px;
         }
         .name-wrapper {
-            margin-top: 4px;
-            font-weight: bold;
-            font-size: 11px;
+            margin-top: 6px;
+            width: 100%;
         }
         .name-input-print {
-            width: 90%;
+            width: 95%;
             border: none;
             border-bottom: 1px dashed #bbb;
             text-align: center;
@@ -279,39 +299,72 @@
             border-bottom: 1px solid #0056b3;
         }
         .patented-name {
-            display: inline-block;
+            display: block;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             color: #111;
-            padding-top: 2px;
+            padding-top: 4px;
+            word-break: break-word;
         }
 
-        /* Submit Area */
+        /* Area Cetak Utama */
         .submit-area {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+            margin-bottom: 15px;
         }
         .btn-submit {
             background: #0056b3;
             color: white;
-            padding: 8px 30px;
-            font-size: 13px;
+            padding: 10px 40px;
+            font-size: 14px;
             font-weight: bold;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 320px;
         }
         .btn-submit:hover { background: #004085; }
         
-        /* Pemutus Halaman Otomatis html2pdf */
         .html2pdf__page-break {
             display: block;
             page-break-before: always;
         }
 
         /* -------------------------------------------------------------
-           MODE EKSPOR PDF AKTIF (KUNCI STABILITAS RENDERING)
+           RESPONSIVE MOBILE BREAKPOINT (Optimalisasi Khusus HP)
+        ------------------------------------------------------------- */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 12px 8px;
+            }
+            h2 {
+                font-size: 15px;
+            }
+            .header-grid {
+                grid-template-columns: 1fr; /* Stack baris tunggal di HP */
+                gap: 8px;
+                padding: 8px;
+            }
+            .signature-grid {
+                grid-template-columns: 1fr 1fr; /* Tanda tangan berbaris 2x2 di HP agar muat */
+                gap: 8px;
+            }
+            .form-group style {
+                width: 100% !important; /* Set dropdown teknisi full-width di HP */
+            }
+            .shift-section .form-group {
+                width: 100% !important;
+            }
+        }
+
+        /* -------------------------------------------------------------
+           MODE EKSPOR PDF AKTIF (KUNCI PRINT STABILITAS LANDSCAPE)
         ------------------------------------------------------------- */
         body.pdf-active {
             background-color: #ffffff !important;
@@ -336,6 +389,15 @@
             padding: 0px !important;      
             width: 100% !important;       
             max-width: 100% !important;
+        }
+        .pdf-mode .header-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important; /* Paksa balik ke landscape form */
+            background: #f8f9fa !important;
+        }
+        .pdf-mode .signature-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important; /* Kembalikan struktur sejajar 4 kolom di berkas cetak */
         }
         .pdf-mode .preview-card {
             border: 1px solid #cbd5e1 !important; 
@@ -365,42 +427,40 @@
     
     <h2>Laporan Harian Pekerjaan</h2>
     
-    <table class="header-table">
-        <tr>
-            <td>
-                <div class="form-group">
-                    <label>Nama Pekerjaan:</label>
-                    <input type="text" value="Pemeliharaan dan Perawatan Fasilitas Jaringan Data" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Lokasi:</label>
-                    <input type="text" value="Bandar Udara International Juanda – Surabaya" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Penyedia Barang / Jasa:</label>
-                    <input type="text" value="PT. Aplikanusa Lintasarta" readonly>
-                </div>
-            </td>
-            <td>
-                <div class="form-group">
-                    <label>Tanggal Pelaksanaan:</label>
-                    <input type="date" id="tanggal_laporan">
-                </div>
-                <div class="form-group">
-                    <label>Pengawas Harian (Airport Technology):</label>
-                    <select id="pengawas_harian">
-                        <option value="">-- Pilih Nama Pengawas --</option>
-                        <option value="WIDY GUNTORO">WIDY GUNTORO</option>
-                        <option value="SATRIYO RAHARJO">SATRIYO RAHARJO</option>
-                        <option value="ACHMAD REZA">ACHMAD REZA</option>
-                        <option value="AVIES">AVIES</option>
-                        <option value="AULIADI SIGIT">AULIADI SIGIT</option>
-                        <option value="SYAHRI RAMADHAN">SYAHRI RAMADHAN</option>
-                    </select>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div class="header-grid">
+        <div>
+            <div class="form-group">
+                <label>Nama Pekerjaan:</label>
+                <input type="text" value="Pemeliharaan dan Perawatan Fasilitas Jaringan Data" readonly>
+            </div>
+            <div class="form-group">
+                <label>Lokasi:</label>
+                <input type="text" value="Bandar Udara International Juanda – Surabaya" readonly>
+            </div>
+            <div class="form-group">
+                <label>Penyedia Barang / Jasa:</label>
+                <input type="text" value="PT. Aplikanusa Lintasarta" readonly>
+            </div>
+        </div>
+        <div>
+            <div class="form-group">
+                <label>Tanggal Pelaksanaan:</label>
+                <input type="date" id="tanggal_laporan">
+            </div>
+            <div class="form-group">
+                <label>Pengawas Harian (Airport Technology):</label>
+                <select id="pengawas_harian">
+                    <option value="">-- Pilih Nama Pengawas --</option>
+                    <option value="WIDY GUNTORO">WIDY GUNTORO</option>
+                    <option value="SATRIYO RAHARJO">SATRIYO RAHARJO</option>
+                    <option value="ACHMAD REZA">ACHMAD REZA</option>
+                    <option value="AVIES">AVIES</option>
+                    <option value="AULIADI SIGIT">AULIADI SIGIT</option>
+                    <option value="SYAHRI RAMADHAN">SYAHRI RAMADHAN</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
     <div class="shift-section">
         <div class="shift-title">SHIFT PAGI (07:00 - 13:00)</div>
@@ -408,22 +468,24 @@
             <label>Pelaksana / Teknisi:</label>
             <select class="pelaksana-select" id="pelaksana_pagi"></select>
         </div>
-        <table class="pekerjaan-table" id="table_pagi">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">Lokasi / Panel</th>
-                    <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
-                    <th class="action-col" style="width: 10%;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" value="Gedung T1" style="width:100%;"></td>
-                    <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
-                    <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="pekerjaan-table" id="table_pagi">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Lokasi / Panel</th>
+                        <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
+                        <th class="action-col" style="width: 10%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" value="Gedung T1" style="width:100%;"></td>
+                        <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+                        <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <button class="btn" onclick="tambahBaris('table_pagi')">+ Tambah Pekerjaan</button>
         
         <div class="upload-container">
@@ -438,22 +500,24 @@
             <label>Pelaksana / Teknisi:</label>
             <select class="pelaksana-select" id="pelaksana_siang"></select>
         </div>
-        <table class="pekerjaan-table" id="table_siang">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">Lokasi / Panel</th>
-                    <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
-                    <th class="action-col" style="width: 10%;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" value="Gedung T2" style="width:100%;"></td>
-                    <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
-                    <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="pekerjaan-table" id="table_siang">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Lokasi / Panel</th>
+                        <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
+                        <th class="action-col" style="width: 10%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" value="Gedung T2" style="width:100%;"></td>
+                        <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+                        <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <button class="btn" onclick="tambahBaris('table_siang')">+ Tambah Pekerjaan</button>
         
         <div class="upload-container">
@@ -468,22 +532,24 @@
             <label>Pelaksana / Teknisi:</label>
             <select class="pelaksana-select" id="pelaksana_malam"></select>
         </div>
-        <table class="pekerjaan-table" id="table_malam">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">Lokasi / Panel</th>
-                    <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
-                    <th class="action-col" style="width: 10%;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" value="Gedung RTT" style="width:100%;"></td>
-                    <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
-                    <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="pekerjaan-table" id="table_malam">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Lokasi / Panel</th>
+                        <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
+                        <th class="action-col" style="width: 10%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" value="Gedung RTT" style="width:100%;"></td>
+                        <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+                        <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <button class="btn" onclick="tambahBaris('table_malam')">+ Tambah Pekerjaan</button>
         
         <div class="upload-container">
@@ -492,9 +558,7 @@
         </div>
     </div>
 
-
     <div class="html2pdf__page-break"></div>
-
 
     <div class="shift-section" style="margin-top: 5px;">
         <div class="shift-title" style="color: #2c3e50;">KUMPULAN DOKUMENTASI FOTO PEKERJAAN</div>
@@ -502,53 +566,58 @@
         <div style="font-size: 11px; font-weight: bold; color: #444; margin-bottom: 4px;">Dokumentasi Shift Pagi:</div>
         <div id="gallery_pagi" class="preview-gallery"><em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em></div>
         
-        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 8px; margin-bottom: 4px;">Dokumentasi Shift Siang:</div>
+        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 12px; margin-bottom: 4px;">Dokumentasi Shift Siang:</div>
         <div id="gallery_siang" class="preview-gallery"><em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em></div>
         
-        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 8px; margin-bottom: 4px;">Dokumentasi Shift Malam:</div>
+        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 12px; margin-bottom: 4px;">Dokumentasi Shift Malam:</div>
         <div id="gallery_malam" class="preview-gallery"><em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em></div>
     </div>
 
-    <table class="signature-table">
-        <tr>
-            <td>
-                <div class="signature-title">Disetujui Oleh,<br>Pengawas Harian AT</div>
-                <canvas id="canvas_pengawas" width="220" height="100"></canvas>
-                <br class="action-col">
-                <button class="clear-btn" onclick="clearCanvas('canvas_pengawas')">Hapus TTD</button>
-                <div class="name-wrapper">
-                    <input type="text" id="nama_tercetak_pengawas" class="name-input-print" value="(...................................)" placeholder="(Nama Pengawas)">
-                </div>
-            </td>
-            <td>
-                <div class="signature-title">Diperiksa Oleh,<br>Teknisi APS</div>
-                <canvas id="canvas_aps" width="220" height="100"></canvas>
-                <br class="action-col">
-                <button class="clear-btn" onclick="clearCanvas('canvas_aps')">Hapus TTD</button>
-                <div class="name-wrapper">
-                    <input type="text" class="name-input-print" value="" placeholder="(Ketik Nama Teknisi APS)">
-                </div>
-            </td>
-            <td>
-                <div class="signature-title">Mengetahui,<br>Terminal Inspektorat</div>
-                <canvas id="canvas_inspektorat" width="220" height="100"></canvas>
-                <br class="action-col">
-                <button class="clear-btn" onclick="clearCanvas('canvas_inspektorat')">Hapus TTD</button>
-                <div class="name-wrapper">
-                    <input type="text" class="name-input-print" value="" placeholder="(Ketik Nama Inspektorat)">
-                </div>
-            </td>
-            <td>
-                <div class="signature-title">Dibuat Oleh,<br>Koordinator Pelaksana Lintasarta</div>
-                <canvas id="canvas_pelaksana" width="220" height="100"></canvas>
-                <br class="action-col">
-                <button class="clear-btn" onclick="clearCanvas('canvas_pelaksana')">Hapus TTD</button>
-                <div class="name-wrapper">
-                    <span class="patented-name">(MOKHAMMAD WAHYU FEBRIYANSYAH)</span>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div class="signature-grid">
+        <div class="signature-item">
+            <div class="signature-title">Disetujui Oleh,<br>Pengawas Harian AT</div>
+            <div class="canvas-container">
+                <canvas id="canvas_pengawas" height="100"></canvas>
+            </div>
+            <button class="clear-btn action-col" onclick="clearCanvas('canvas_pengawas')">Hapus</button>
+            <div class="name-wrapper">
+                <input type="text" id="nama_tercetak_pengawas" class="name-input-print" value="(...................................)" placeholder="(Nama Pengawas)">
+            </div>
+        </div>
+        
+        <div class="signature-item">
+            <div class="signature-title">Diperiksa Oleh,<br>Teknisi APS</div>
+            <div class="canvas-container">
+                <canvas id="canvas_aps" height="100"></canvas>
+            </div>
+            <button class="clear-btn action-col" onclick="clearCanvas('canvas_aps')">Hapus</button>
+            <div class="name-wrapper">
+                <input type="text" class="name-input-print" value="" placeholder="(Ketik Nama Teknisi APS)">
+            </div>
+        </div>
+        
+        <div class="signature-item">
+            <div class="signature-title">Mengetahui,<br>Terminal Inspektorat</div>
+            <div class="canvas-container">
+                <canvas id="canvas_inspektorat" height="100"></canvas>
+            </div>
+            <button class="clear-btn action-col" onclick="clearCanvas('canvas_inspektorat')">Hapus</button>
+            <div class="name-wrapper">
+                <input type="text" class="name-input-print" value="" placeholder="(Ketik Nama Inspektorat)">
+            </div>
+        </div>
+        
+        <div class="signature-item">
+            <div class="signature-title">Dibuat Oleh,<br>Koordinator Pelaksana Lintasarta</div>
+            <div class="canvas-container">
+                <canvas id="canvas_pelaksana" height="100"></canvas>
+            </div>
+            <button class="clear-btn action-col" onclick="clearCanvas('canvas_pelaksana')">Hapus</button>
+            <div class="name-wrapper">
+                <span class="patented-name">(MOKHAMMAD WAHYU FEBRIYANSYAH)</span>
+            </div>
+        </div>
+    </div>
 
     <div class="submit-area">
         <button class="btn-submit" onclick="downloadPDFDirectly()">SELESAIKAN PEKERJAANMU</button>
@@ -670,8 +739,9 @@
         document.body.classList.add('pdf-active');
         element.classList.add('pdf-mode');
 
+        // Pengaturan ekspor PDF agar tetap presisi landscape A4
         const opt = {
-            margin:       [8, 10, 8, 10], // Margin atas-bawah sedikit diperketat demi keamanan halaman 
+            margin:       [8, 10, 8, 10], 
             filename:     `Laporan_Harian_${tglInput}.pdf`,
             image:        { type: 'jpeg', quality: 1.0 }, 
             html2canvas:  { 
@@ -696,23 +766,49 @@
         });
     }
 
+    // Perbaikan Pad Signature: Otomatis kalkulasi ulang rasio koordinat sentuh/klik saat ukuran layar berubah (Responsif HP)
     function setupSignaturePad(canvasId) {
         const canvas = document.getElementById(canvasId);
         const ctx = canvas.getContext('2d');
         let drawing = false;
 
+        // Inisialisasi properti line default
         ctx.strokeStyle = "#00008B"; 
         ctx.lineWidth = 2.5;
         ctx.lineCap = "round";
 
+        // Fungsi penyesuai resolusi internal canvas agar tidak buram
+        function resizeCanvasInternal() {
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            if (canvas.width !== width || canvas.height !== height) {
+                // Simpan konten jika ada sebelum resize (opsional)
+                canvas.width = width;
+                canvas.height = height;
+                ctx.strokeStyle = "#00008B"; 
+                ctx.lineWidth = 2.5;
+                ctx.lineCap = "round";
+            }
+        }
+        
+        // Jalankan resize internal di awal & saat orientasi HP berganti
+        window.addEventListener('resize', resizeCanvasInternal);
+        setTimeout(resizeCanvasInternal, 200);
+
         function getMousePos(mouseEvent) {
             const rect = canvas.getBoundingClientRect();
-            return { x: mouseEvent.clientX - rect.left, y: mouseEvent.clientY - rect.top };
+            return {
+                x: (mouseEvent.clientX - rect.left) * (canvas.width / rect.width),
+                y: (mouseEvent.clientY - rect.top) * (canvas.height / rect.height)
+            };
         }
 
         function getTouchPos(touchEvent) {
             const rect = canvas.getBoundingClientRect();
-            return { x: touchEvent.touches[0].clientX - rect.left, y: touchEvent.touches[0].clientY - rect.top };
+            return {
+                x: (touchEvent.touches[0].clientX - rect.left) * (canvas.width / rect.width),
+                y: (touchEvent.touches[0].top - rect.top) * (canvas.height / rect.height)
+            };
         }
 
         canvas.addEventListener('mousedown', (e) => {
@@ -729,6 +825,7 @@
         });
         window.addEventListener('mouseup', () => { drawing = false; });
 
+        // Touch event khusus pengguna smartphone touchscreen (Android / iOS)
         canvas.addEventListener('touchstart', (e) => {
             drawing = true;
             const pos = getTouchPos(e);
@@ -752,6 +849,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+    // Inisialisasi seluruh pad TTD
     setupSignaturePad('canvas_pengawas');
     setupSignaturePad('canvas_aps');
     setupSignaturePad('canvas_inspektorat');
