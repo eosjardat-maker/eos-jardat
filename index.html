@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Harian Pemeliharaan Jaringan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        /* Pengaturan Dasar Halaman */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            color: #222;
+        }
+        
+        /* Kontainer Utama - Dioptimalkan untuk 2 Lembar Pas */
+        .container {
+            width: 100%;
+            max-width: 1040px;
+            background: #fff;
+            margin: 0 auto;
+            padding: 20px 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        
+        h2 {
+            text-align: center;
+            text-transform: uppercase;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #0056b3;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 5px;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Layout Tabel Informasi Utama KOP */
+        .header-table {
+            width: 100%;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-left: 5px solid #0056b3;
+            border-collapse: collapse;
+        }
+        .header-table td {
+            padding: 6px 12px;
+            vertical-align: top;
+            border: none;
+            width: 50%;
+        }
+        
+        .form-group {
+            margin-bottom: 5px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 11px;
+            color: #555;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 12px;
+            color: #333;
+        }
+        
+        /* Sektor Blok Shift (Diringkas agar 3 shift muat di Lembar 1) */
+        .shift-section {
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+        .shift-title {
+            font-weight: bold;
+            color: #4e73df;
+            border-bottom: 1px solid #e3e6f0;
+            padding-bottom: 2px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        /* Tabel Input Kerjaan */
+        table.pekerjaan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+        table.pekerjaan-table th {
+            background-color: #f5f7fa;
+            border: 1px solid #dcdfe6;
+            padding: 6px;
+            font-size: 11px;
+            text-align: left;
+            color: #444;
+        }
+        table.pekerjaan-table td {
+            border: 1px solid #dcdfe6;
+            padding: 4px;
+            vertical-align: middle;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: none;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+        }
+        
+        /* Tombol Aksi */
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .btn:hover { background: #218838; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        
+        /* Komponen Upload Gambar */
+        .upload-container {
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px dotted #ccc;
+        }
+        .upload-label {
+            display: inline-block;
+            background: #4e73df;
+            color: white;
+            padding: 3px 8px;
+            font-size: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .file-input { display: none; }
+        
+        /* Galeri Foto Output Lembar 2 (Grid Ekonomis) */
+        .preview-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 10px;
+            margin-top: 4px;
+            text-align: left;
+        }
+        .preview-card {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 5px;
+            position: relative;
+            text-align: center;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+        .image-container {
+            width: 100%;
+            height: 85px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .img-caption-input {
+            width: 100%;
+            margin-top: 4px;
+            padding: 3px;
+            font-size: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .remove-img-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 14px;
+            padding: 0;
+            z-index: 10;
+        }
+
+        /* Tabel Tanda Tangan */
+        .signature-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+            border: none;
+            page-break-inside: avoid;
+        }
+        .signature-table td {
+            width: 25%;
+            text-align: center;
+            vertical-align: top;
+            padding: 4px;
+            border: none;
+        }
+        .signature-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 11px;
+            line-height: 1.3;
+            height: 30px;
+            color: #333;
+        }
+        canvas {
+            border: 1px dashed #ababab;
+            background-color: #fafafa;
+            border-radius: 4px;
+            cursor: crosshair;
+        }
+        .clear-btn {
+            margin-top: 2px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 9px;
+        }
+        .name-wrapper {
+            margin-top: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .name-input-print {
+            width: 90%;
+            border: none;
+            border-bottom: 1px dashed #bbb;
+            text-align: center;
+            font-weight: bold;
+            font-size: 11px;
+            background: transparent;
+            padding: 2px;
+            color: #222;
+        }
+        .name-input-print:focus {
+            outline: none;
+            border-bottom: 1px solid #0056b3;
+        }
+        .patented-name {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 11px;
+            color: #111;
+            padding-top: 2px;
+        }
+
+        /* Submit Area */
+        .submit-area {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-submit {
+            background: #0056b3;
+            color: white;
+            padding: 8px 30px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+        }
+        .btn-submit:hover { background: #004085; }
+        
+        /* Pemutus Halaman Otomatis html2pdf */
+        .html2pdf__page-break {
+            display: block;
+            page-break-before: always;
+        }
+
+        /* -------------------------------------------------------------
+           MODE EKSPOR PDF AKTIF (KUNCI STABILITAS RENDERING)
+        ------------------------------------------------------------- */
+        body.pdf-active {
+            background-color: #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .pdf-mode .btn, 
+        .pdf-mode .clear-btn, 
+        .pdf-mode .submit-area, 
+        .pdf-mode .action-col, 
+        .pdf-mode .upload-container, 
+        .pdf-mode .remove-img-btn {
+            display: none !important; 
+        }
+        .pdf-mode canvas {
+            border: none !important;      
+            background: transparent !important;
+        }
+        .pdf-mode .container {
+            box-shadow: none !important;  
+            padding: 0px !important;      
+            width: 100% !important;       
+            max-width: 100% !important;
+        }
+        .pdf-mode .preview-card {
+            border: 1px solid #cbd5e1 !important; 
+            background: #fff !important;
+        }
+        .pdf-mode textarea, .pdf-mode input, .pdf-mode select {
+            border: none !important;
+            background: transparent !important;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 0 !important;
+            font-size: 11px !important;
+            color: #000 !important;
+            font-weight: bold !important;
+            width: 100% !important;
+        }
+        .pdf-mode .name-input-print {
+            border-bottom: none !important;
+            text-align: center !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="laporan_content">
+    
+    <h2>Laporan Harian Pekerjaan</h2>
+    
+    <table class="header-table">
+        <tr>
+            <td>
+                <div class="form-group">
+                    <label>Nama Pekerjaan:</label>
+                    <input type="text" value="Pemeliharaan dan Perawatan Fasilitas Jaringan Data" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Lokasi:</label>
+                    <input type="text" value="Bandar Udara International Juanda – Surabaya" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Penyedia Barang / Jasa:</label>
+                    <input type="text" value="PT. Aplikanusa Lintasarta" readonly>
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                    <label>Tanggal Pelaksanaan:</label>
+                    <input type="date" id="tanggal_laporan">
+                </div>
+                <div class="form-group">
+                    <label>Pengawas Harian (Airport Technology):</label>
+                    <select id="pengawas_harian">
+                        <option value="">-- Pilih Nama Pengawas --</option>
+                        <option value="WIDY GUNTORO">WIDY GUNTORO</option>
+                        <option value="SATRIYO RAHARJO">SATRIYO RAHARJO</option>
+                        <option value="ACHMAD REZA">ACHMAD REZA</option>
+                        <option value="AVIES">AVIES</option>
+                        <option value="AULIADI SIGIT">AULIADI SIGIT</option>
+                        <option value="SYAHRI RAMADHAN">SYAHRI RAMADHAN</option>
+                    </select>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="shift-section">
+        <div class="shift-title">SHIFT PAGI (07:00 - 13:00)</div>
+        <div class="form-group" style="width: 320px; margin-bottom: 6px;">
+            <label>Pelaksana / Teknisi:</label>
+            <select class="pelaksana-select" id="pelaksana_pagi"></select>
+        </div>
+        <table class="pekerjaan-table" id="table_pagi">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Lokasi / Panel</th>
+                    <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
+                    <th class="action-col" style="width: 10%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" value="Gedung T1" style="width:100%;"></td>
+                    <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+                    <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn" onclick="tambahBaris('table_pagi')">+ Tambah Pekerjaan</button>
+        
+        <div class="upload-container">
+            <label class="upload-label" for="upload_pagi">📸 Tambah Foto Dokumentasi Pagi</label>
+            <input type="file" id="upload_pagi" class="file-input" accept="image/*" multiple onchange="handleImageUpload(this, 'gallery_pagi')">
+        </div>
+    </div>
+
+    <div class="shift-section">
+        <div class="shift-title">SHIFT SIANG (13:00 - 19:00)</div>
+        <div class="form-group" style="width: 320px; margin-bottom: 6px;">
+            <label>Pelaksana / Teknisi:</label>
+            <select class="pelaksana-select" id="pelaksana_siang"></select>
+        </div>
+        <table class="pekerjaan-table" id="table_siang">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Lokasi / Panel</th>
+                    <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
+                    <th class="action-col" style="width: 10%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" value="Gedung T2" style="width:100%;"></td>
+                    <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+                    <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn" onclick="tambahBaris('table_siang')">+ Tambah Pekerjaan</button>
+        
+        <div class="upload-container">
+            <label class="upload-label" for="upload_siang">📸 Tambah Foto Dokumentasi Siang</label>
+            <input type="file" id="upload_siang" class="file-input" accept="image/*" multiple onchange="handleImageUpload(this, 'gallery_siang')">
+        </div>
+    </div>
+
+    <div class="shift-section">
+        <div class="shift-title">SHIFT MALAM (19:00 - 07:00)</div>
+        <div class="form-group" style="width: 320px; margin-bottom: 6px;">
+            <label>Pelaksana / Teknisi:</label>
+            <select class="pelaksana-select" id="pelaksana_malam"></select>
+        </div>
+        <table class="pekerjaan-table" id="table_malam">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Lokasi / Panel</th>
+                    <th style="width: 65%;">Uraian Pekerjaan Yang Diselesaikan</th>
+                    <th class="action-col" style="width: 10%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" value="Gedung RTT" style="width:100%;"></td>
+                    <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+                    <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn" onclick="tambahBaris('table_malam')">+ Tambah Pekerjaan</button>
+        
+        <div class="upload-container">
+            <label class="upload-label" for="upload_malam">📸 Tambah Foto Dokumentasi Malam</label>
+            <input type="file" id="upload_malam" class="file-input" accept="image/*" multiple onchange="handleImageUpload(this, 'gallery_malam')">
+        </div>
+    </div>
+
+
+    <div class="html2pdf__page-break"></div>
+
+
+    <div class="shift-section" style="margin-top: 5px;">
+        <div class="shift-title" style="color: #2c3e50;">KUMPULAN DOKUMENTASI FOTO PEKERJAAN</div>
+        
+        <div style="font-size: 11px; font-weight: bold; color: #444; margin-bottom: 4px;">Dokumentasi Shift Pagi:</div>
+        <div id="gallery_pagi" class="preview-gallery"><em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em></div>
+        
+        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 8px; margin-bottom: 4px;">Dokumentasi Shift Siang:</div>
+        <div id="gallery_siang" class="preview-gallery"><em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em></div>
+        
+        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 8px; margin-bottom: 4px;">Dokumentasi Shift Malam:</div>
+        <div id="gallery_malam" class="preview-gallery"><em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em></div>
+    </div>
+
+    <table class="signature-table">
+        <tr>
+            <td>
+                <div class="signature-title">Disetujui Oleh,<br>Pengawas Harian AT</div>
+                <canvas id="canvas_pengawas" width="220" height="100"></canvas>
+                <br class="action-col">
+                <button class="clear-btn" onclick="clearCanvas('canvas_pengawas')">Hapus TTD</button>
+                <div class="name-wrapper">
+                    <input type="text" id="nama_tercetak_pengawas" class="name-input-print" value="(...................................)" placeholder="(Nama Pengawas)">
+                </div>
+            </td>
+            <td>
+                <div class="signature-title">Diperiksa Oleh,<br>Teknisi APS</div>
+                <canvas id="canvas_aps" width="220" height="100"></canvas>
+                <br class="action-col">
+                <button class="clear-btn" onclick="clearCanvas('canvas_aps')">Hapus TTD</button>
+                <div class="name-wrapper">
+                    <input type="text" class="name-input-print" value="" placeholder="(Ketik Nama Teknisi APS)">
+                </div>
+            </td>
+            <td>
+                <div class="signature-title">Mengetahui,<br>Terminal Inspektorat</div>
+                <canvas id="canvas_inspektorat" width="220" height="100"></canvas>
+                <br class="action-col">
+                <button class="clear-btn" onclick="clearCanvas('canvas_inspektorat')">Hapus TTD</button>
+                <div class="name-wrapper">
+                    <input type="text" class="name-input-print" value="" placeholder="(Ketik Nama Inspektorat)">
+                </div>
+            </td>
+            <td>
+                <div class="signature-title">Dibuat Oleh,<br>Koordinator Pelaksana Lintasarta</div>
+                <canvas id="canvas_pelaksana" width="220" height="100"></canvas>
+                <br class="action-col">
+                <button class="clear-btn" onclick="clearCanvas('canvas_pelaksana')">Hapus TTD</button>
+                <div class="name-wrapper">
+                    <span class="patented-name">(MOKHAMMAD WAHYU FEBRIYANSYAH)</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="submit-area">
+        <button class="btn-submit" onclick="downloadPDFDirectly()">SELESAIKAN PEKERJAANMU</button>
+    </div>
+</div>
+
+<script>
+    const listPelaksana = [
+        "ARIF APRILIYANTO",
+        "MOKHAMMAD WAHYU FEBRIYANSYAH",
+        "GALARINGGO ZAKY FAWAID",
+        "KOHIRUL ANWARI"
+    ];
+
+    document.getElementById('tanggal_laporan').valueAsDate = new Date();
+
+    document.querySelectorAll('.pelaksana-select').forEach(select => {
+        let htmlOptions = '<option value="">-- Pilih Nama Pelaksana --</option>';
+        listPelaksana.forEach(nama => { htmlOptions += `<option value="${nama}">${nama}</option>`; });
+        select.innerHTML = htmlOptions;
+    });
+
+    document.getElementById('pengawas_harian').addEventListener('change', function() {
+        document.getElementById('nama_tercetak_pengawas').value = this.value ? `(${this.value})` : '(...................................)';
+    });
+
+    function tambahBaris(tableId) {
+        const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td><input type="text" placeholder="Lokasi / Panel" style="width:100%;"></td>
+            <td><textarea rows="2" placeholder="Tulis rincian pemeliharaan..."></textarea></td>
+            <td class="action-col"><button class="btn btn-danger" onclick="hapusBaris(this)">Hapus</button></td>
+        `;
+    }
+
+    function hapusBaris(button) {
+        const row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+    function handleImageUpload(input, galleryId) {
+        const gallery = document.getElementById(galleryId);
+        const files = input.files;
+        
+        if (gallery.querySelector('em')) {
+            gallery.innerHTML = '';
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file.type.startsWith('image/')) continue;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const card = document.createElement('div');
+                card.className = 'preview-card';
+
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'image-container';
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                imgContainer.appendChild(img);
+
+                const captionInput = document.createElement('input');
+                captionInput.type = 'text';
+                captionInput.className = 'img-caption-input';
+                captionInput.placeholder = 'Keterangan...';
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-img-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.onclick = function() { 
+                    gallery.removeChild(card); 
+                    if(gallery.children.length === 0){
+                        gallery.innerHTML = '<em style="font-size:11px; color:#999;" class="action-col">Belum ada foto lampiran.</em>';
+                    }
+                };
+
+                card.appendChild(imgContainer);
+                card.appendChild(captionInput);
+                card.appendChild(removeBtn);
+                gallery.appendChild(card);
+            };
+            reader.readAsDataURL(file);
+        }
+        input.value = '';
+    }
+
+    function downloadPDFDirectly() {
+        const element = document.getElementById('laporan_content');
+        const tglInput = document.getElementById('tanggal_laporan').value || 'Laporan';
+        
+        const inputs = element.querySelectorAll('input[type="text"], textarea');
+        inputs.forEach(input => {
+            input.setAttribute('value', input.value);
+            if (input.tagName.toLowerCase() === 'textarea') {
+                input.innerHTML = input.value;
+            }
+        });
+
+        const captionInputs = element.querySelectorAll('.img-caption-input');
+        captionInputs.forEach(cap => {
+            cap.setAttribute('value', cap.value);
+        });
+
+        const selects = element.querySelectorAll('select');
+        selects.forEach(select => {
+            for (let i = 0; i < select.options.length; i++) {
+                if (i === select.selectedIndex) {
+                    select.options[i].setAttribute('selected', 'selected');
+                } else {
+                    select.options[i].removeAttribute('selected');
+                }
+            }
+        });
+
+        document.body.classList.add('pdf-active');
+        element.classList.add('pdf-mode');
+
+        const opt = {
+            margin:       [8, 10, 8, 10], // Margin atas-bawah sedikit diperketat demi keamanan halaman 
+            filename:     `Laporan_Harian_${tglInput}.pdf`,
+            image:        { type: 'jpeg', quality: 1.0 }, 
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true,
+                scrollX: 0,        
+                scrollY: 0
+            }, 
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+            pagebreak:    { mode: ['css'] } 
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.body.classList.remove('pdf-active');
+            element.classList.remove('pdf-mode');
+        }).catch(err => {
+            console.error(err);
+            document.body.classList.remove('pdf-active');
+            element.classList.remove('pdf-mode');
+        });
+    }
+
+    function setupSignaturePad(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        ctx.strokeStyle = "#00008B"; 
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = "round";
+
+        function getMousePos(mouseEvent) {
+            const rect = canvas.getBoundingClientRect();
+            return { x: mouseEvent.clientX - rect.left, y: mouseEvent.clientY - rect.top };
+        }
+
+        function getTouchPos(touchEvent) {
+            const rect = canvas.getBoundingClientRect();
+            return { x: touchEvent.touches[0].clientX - rect.left, y: touchEvent.touches[0].clientY - rect.top };
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            const pos = getMousePos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        });
+        canvas.addEventListener('mousemove', (e) => {
+            if (!drawing) return;
+            const pos = getMousePos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        });
+        window.addEventListener('mouseup', () => { drawing = false; });
+
+        canvas.addEventListener('touchstart', (e) => {
+            drawing = true;
+            const pos = getTouchPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => {
+            if (!drawing) return;
+            const pos = getTouchPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            e.preventDefault();
+        }, { passive: false });
+        window.addEventListener('touchend', () => { drawing = false; });
+    }
+
+    function clearCanvas(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    setupSignaturePad('canvas_pengawas');
+    setupSignaturePad('canvas_aps');
+    setupSignaturePad('canvas_inspektorat');
+    setupSignaturePad('canvas_pelaksana');
+</script>
+</body>
+</html>
