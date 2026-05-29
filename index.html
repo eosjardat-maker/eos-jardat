@@ -318,15 +318,33 @@
             .btn-submit, .btn-reset { width: 100%; max-width: 320px; }
         }
 
-        /* --- PDF PRINT MODE --- */
+        /* --- PDF PRINT MODE OPTIMIZATION --- */
         body.pdf-active { background-color: #fff; padding: 0; margin: 0; }
         .pdf-mode .btn, .pdf-mode .clear-btn, .pdf-mode .submit-area, .pdf-mode .action-col, .pdf-mode .upload-container, .pdf-mode .remove-img-btn { display: none !important; }
         .pdf-mode canvas { border: none !important; background: transparent !important; }
         .pdf-mode .container { box-shadow: none !important; padding: 0px !important; width: 100% !important; max-width: 100% !important; }
-        .pdf-mode .header-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; }
-        .pdf-mode .signature-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; }
+        .pdf-mode .header-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; margin-bottom: 10px; padding: 8px; }
+        .pdf-mode .signature-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; margin-top: 15px; gap: 8px; }
         .pdf-mode textarea, .pdf-mode input, .pdf-mode select { border: none !important; background: transparent !important; padding: 0 !important; font-size: 11px !important; color: #000 !important; font-weight: bold !important; width: 100% !important; appearance: none; -webkit-appearance: none; }
         .pdf-mode .name-input-print { border-bottom: none !important; text-align: center !important; }
+        
+        /* Optimasi Spasi Lembar 1 (Semua Shift Muat) */
+        .pdf-mode h2 { margin-bottom: 8px; font-size: 16px; padding-bottom: 4px; }
+        .pdf-mode .shift-section { margin-bottom: 6px; padding: 6px; border: 1px solid #b0b5c0; }
+        .pdf-mode .shift-title { font-size: 11px; margin-bottom: 4px; padding-bottom: 2px; }
+        .pdf-mode table.pekerjaan-table th { padding: 4px; font-size: 10px; }
+        .pdf-mode table.pekerjaan-table td { padding: 4px; font-size: 10px; }
+        .pdf-mode .form-group { margin-bottom: 4px; }
+        .pdf-mode .form-group label { font-size: 9px; margin-bottom: 1px; }
+
+        /* Optimasi Spasi Lembar 2 (Dokumentasi & Tanda Tangan) */
+        .pdf-mode .preview-gallery { grid-template-columns: repeat(4, 1fr) !important; gap: 8px; }
+        .pdf-mode .preview-card { border: 1px solid #aaa; padding: 4px; }
+        .pdf-mode .image-container { height: 110px; }
+        .pdf-mode .img-caption-input { font-size: 10px; border: none !important; margin-top: 3px; font-weight: bold; }
+        .pdf-mode .signature-item { padding: 6px; border: 1px solid #b0b5c0; }
+        .pdf-mode .signature-title { font-size: 10px; height: 28px; margin-bottom: 4px; }
+        .pdf-mode canvas { height: 75px !important; }
     </style>
 </head>
 <body>
@@ -372,7 +390,7 @@
 
     <div class="shift-section">
         <div class="shift-title">SHIFT PAGI (07:00 - 13:00)</div>
-        <div class="form-group" style="width: 320px; margin-bottom: 6px;">
+        <div class="form-group pelaksana-area" style="width: 320px; margin-bottom: 6px;">
             <label>Pelaksana / Teknisi:</label>
             <select class="pelaksana-select save-state" id="pelaksana_pagi"></select>
         </div>
@@ -399,7 +417,7 @@
 
     <div class="shift-section">
         <div class="shift-title">SHIFT SIANG (13:00 - 19:00)</div>
-        <div class="form-group" style="width: 320px; margin-bottom: 6px;">
+        <div class="form-group pelaksana-area" style="width: 320px; margin-bottom: 6px;">
             <label>Pelaksana / Teknisi:</label>
             <select class="pelaksana-select save-state" id="pelaksana_siang"></select>
         </div>
@@ -426,7 +444,7 @@
 
     <div class="shift-section">
         <div class="shift-title">SHIFT MALAM (19:00 - 07:00)</div>
-        <div class="form-group" style="width: 320px; margin-bottom: 6px;">
+        <div class="form-group pelaksana-area" style="width: 320px; margin-bottom: 6px;">
             <label>Pelaksana / Teknisi:</label>
             <select class="pelaksana-select save-state" id="pelaksana_malam"></select>
         </div>
@@ -454,9 +472,9 @@
     <div class="html2pdf__page-break"></div>
 
     <div class="shift-section" style="margin-top: 5px;">
-        <div class="shift-title" style="color: #2c3e50;">KUMPULAN DOKUMENTASI FOTO PEKERJAAN</div>
+        <div class="shift-title" style="color: #2c3e50; font-size: 14px; border-bottom: 2px solid #2c3e50;">KUMPULAN DOKUMENTASI FOTO PEKERJAAN</div>
         
-        <div style="font-size: 11px; font-weight: bold; color: #444; margin-bottom: 4px;">Dokumentasi Shift Pagi:</div>
+        <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 6px; margin-bottom: 4px;">Dokumentasi Shift Pagi:</div>
         <div id="gallery_pagi" class="preview-gallery"></div>
         
         <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 12px; margin-bottom: 4px;">Dokumentasi Shift Siang:</div>
