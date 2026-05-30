@@ -309,6 +309,23 @@
             cursor: pointer;
         }
 
+        
+        @media (max-width: 1024px) {
+            .container { padding: 15px; }
+            table.pekerjaan-table { min-width: 100%; }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .shift-section { padding: 10px; }
+            .pelaksana-area { width: 100% !important; }
+            .form-group input, .form-group select, textarea {
+                font-size: 14px;
+            }
+            .preview-gallery { grid-template-columns: 1fr !important; }
+            .signature-grid { grid-template-columns: 1fr !important; }
+        }
+
         @media (max-width: 1024px) {
             .preview-gallery { grid-template-columns: repeat(3, 1fr); }
         }
@@ -486,7 +503,7 @@
     </div>
 
     <!-- LEMBAR 2: KHUSUS KUMPULAN FOTO (MAKS 5 KOLOM) & TANDA TANGAN -->
-    <div class="pdf-page page-dua-wrapper" style="margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px;">
+    <div class="pdf-page page-dua-wrapper" style="margin-top: 20px; padding-top: 10px;">
         <div class="shift-section">
             <div class="shift-title" style="color: #2c3e50; font-size: 14px; border-bottom: 2px solid #2c3e50;">KUMPULAN DOKUMENTASI FOTO PEKERJAAN</div>
             
@@ -607,6 +624,9 @@
     }
 
     function createImageCard(gallery, src, captionValue) {
+        const emptyHint = gallery.querySelector('em');
+        if (emptyHint) emptyHint.remove();
+
         const card = document.createElement('div');
         card.className = 'preview-card';
 
